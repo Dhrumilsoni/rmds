@@ -4,11 +4,18 @@ from abc import abstractmethod
 from collections.abc import Callable
 import pandas as pd
 import constants
+import datetime
 
 
 def parse_args():
 	parser = argparse.ArgumentParser()
 	return parser.parse_args()
+
+
+def get_date_minus_days(date: str, days: int):
+	start_date = datetime.datetime.strptime(date, constants.DATE_FORMAT)
+	stock_days = datetime.timedelta(days)
+	return (start_date - stock_days).strftime(constants.DATE_FORMAT)
 
 
 class AbstractPreProcessor:
@@ -44,7 +51,7 @@ class AbstractPreProcessor:
 		stock_df = pd.read_csv(stock_file)
 		stock_df = stock_df.loc[:, ["Date Value", "Value", "Stock Name"]]
 		stock_df.columns = ["date", constants.STOCK_COLUMN, "stock_name"]
-		stock_df["date"] = pd.to_datetime(stock_df["date"])
+		stock_df["date"] = pd.to_datetime(stock_df["date"], format=constants.DATE_FORMAT)
 		stock_df = stock_df.set_index("date")
 
 		stock_dfs = {}
@@ -53,6 +60,24 @@ class AbstractPreProcessor:
 
 		for company, df in stock_dfs.items():
 			stock_dfs[company] = AbstractPreProcessor.set_missing_dates_ffill(df)
+
+		# for company, df in stock_dfs.items():
+			# print(df.index[0])
+			# print(pd.to_datetime('1997-08-01', format=constants.DATE_FORMAT))
+			# print(df[str(pd.to_datetime('1997-08-01', format=constants.DATE_FORMAT))])
+			# # print(df.index.dtype)
+			# try:
+			# 	print(self.start_date)
+			# 	val = df.loc[self.start_date, 'date']
+			# except KeyError:
+			# 	assert False, company+" stock doesn't have start_date value"
+
+			#
+			# val = df.date.get(get_date_minus_days(self.start_date, self.past_horizon[constants.STOCK_COLUMN]), None)
+			# assert val, company+" stock doesn't have start_date-stock_days value"
+			#
+			# val = df.date.get(self.end_date, None)
+			# assert val, company+" stock doesn't have end_date value"
 
 		return stock_dfs
 
@@ -63,6 +88,16 @@ class AbstractPreProcessor:
 		commodity_df.date = pd.to_datetime(commodity_df.date)
 		commodity_df = commodity_df.set_index('date')
 		commodity_df = AbstractPreProcessor.set_missing_dates_ffill(commodity_df)
+
+		# val = commodity_df.date.get(self.start_date, None)
+		# assert val, "oil price doesn't have start_date value"
+		#
+		# val = commodity_df.date.get(get_date_minus_days(self.start_date, self.past_horizon[constants.STOCK_COLUMN]), None)
+		# assert val, "oil price doesn't have start_date-stock_days value"
+		#
+		# val = commodity_df.date.get(self.end_date, None)
+		# assert val, "oil price doesn't have end_date value"
+
 		return commodity_df
 
 	def merge_dfs(self, *args):
