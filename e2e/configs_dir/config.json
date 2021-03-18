@@ -1,10 +1,16 @@
 {
-  "csv_files": ["dataset/stock_exchange.csv"],
-  "preprocessor_name": "stock_preprocessor",
-  "past_horizon": {
-    "stock_price": 400,
-    "oil_price": 60
+  "preprocessor_args": {
+    "csv_files": ["dataset/stock_exchange.csv"],
+    "preprocessor_name": "stock_preprocessor",
+    "past_horizon": {
+      "stock_price": 400,
+      "oil_price": 60
+    },
+    "start_date": "2015-01-01",
+    "end_date": "2020-12-31"
   },
+
+
   "prediction_window": 7,
   "model": {
     "name": "test_model",

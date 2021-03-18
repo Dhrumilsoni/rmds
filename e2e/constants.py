@@ -9,3 +9,6 @@ PREDICTION_WINDOW = "prediction_window"
 PAST_HORIZON = "past_horizon"
 STOCK_COLUMN = 'stock_price'
 OIL_COLUMN = 'oil_price'
+START_DATE = 'start_date'
+END_DATE = 'end_date'
+PREPROCESSOR_ARGS = 'preprocessor_args'

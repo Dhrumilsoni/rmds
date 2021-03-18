@@ -13,7 +13,9 @@ def parse_args():
 
 class AbstractPreProcessor:
 	def __init__(self, **kwargs):
-		self.past_horizon = kwargs
+		self.past_horizon = kwargs[constants.PAST_HORIZON]
+		self.start_date = kwargs[constants.START_DATE]
+		self.end_date = kwargs[constants.END_DATE]
 
 	'''
 	Takes a list of csv files and returns dict of dataframes keyed by company names.
