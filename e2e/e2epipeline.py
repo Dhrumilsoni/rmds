@@ -17,10 +17,13 @@ def main(config_pth: str):
 	with open(config_pth, 'r') as f:
 		config = json.load(f)
 
-	preprocessor = PreProcessorFactory.create_preprocessor(config[constants.PREPROCESSOR_NAME])
-	company_wise_dataframes = preprocessor.preprocess(config[constants.CSV_FILES])
+	preprocessor = PreProcessorFactory.create_preprocessor(config[constants.PREPROCESSOR_NAME], **config[constants.PAST_HORIZON])
+	company_wise_dataframes, columns_info = preprocessor.preprocess(config[constants.CSV_FILES])
 
-	tts = TrainTestSplit(config[constants.PREDICTION_WINDOW])
+	print(company_wise_dataframes)
+	print(columns_info)
+
+	tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info)
 	evaluation = Evaluation()
 
 	for company, df in company_wise_dataframes.items():

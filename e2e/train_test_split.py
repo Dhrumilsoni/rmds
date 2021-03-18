@@ -10,8 +10,9 @@ def parse_args():
 
 
 class TrainTestSplit(object):
-	def __init__(self, prediction_window):
+	def __init__(self, prediction_window, columns_info):
 		self.prediction_window = prediction_window
+		self.columns_info = columns_info
 
 	'''
 	Takes a dict of pre-processed pandas dataframe and for each dataframe in the list and outputs a dict with all

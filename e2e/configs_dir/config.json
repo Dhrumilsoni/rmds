@@ -1,6 +1,10 @@
 {
-  "csv_files": ["pth1", "pth2"],
-  "preprocessor_name": "smit_preprocessor",
+  "csv_files": ["dataset/stock_exchange.csv"],
+  "preprocessor_name": "stock_preprocessor",
+  "past_horizon": {
+    "stock_price": 400,
+    "oil_price": 60
+  },
   "prediction_window": 7,
   "model": {
     "name": "test_model",

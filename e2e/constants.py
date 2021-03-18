@@ -6,3 +6,6 @@ CSV_FILES = "csv_files"
 TRAIN = "train"
 TEST = "test"
 PREDICTION_WINDOW = "prediction_window"
+PAST_HORIZON = "past_horizon"
+STOCK_COLUMN = 'stock_price'
+OIL_COLUMN = 'oil_price'
