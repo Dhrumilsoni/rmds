@@ -64,8 +64,8 @@ class TrainTestSplit(object):
 	
 	{
 		'2020-01-04': {
-			'train': Dict[str, pd.DataSeries],
-			'test': df2
+		'train': Dict[str, pd.DataSeries],
+		'test': df2
 		}
 		...
 	} 
