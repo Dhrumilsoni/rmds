@@ -2,6 +2,12 @@ import argparse
 from abc import abstractmethod
 from typing import List, Dict
 import pandas as pd
+import datetime
+import constants
+import random
+from calendar import monthrange
+from utils import get_date_minus_days
+import copy
 
 
 def parse_args():
@@ -9,10 +15,48 @@ def parse_args():
 	return parser.parse_args()
 
 
+def increment_month(date):
+	if date.month < 12:
+		date = date.replace(month=date.month + 1)
+	else:
+		date = date.replace(year=date.year + 1, month=1)
+	return date
+
+
+def get_two_dates_in_a_month(start_date):
+	first_date = random.randint(1, 15)
+	second_date = first_date + random.randint(13, 15)
+
+	while second_date > monthrange(start_date.year, start_date.month)[1]:
+		second_date -= 1
+
+	first_date = start_date.replace(day=first_date)
+	second_date = start_date.replace(day=second_date)
+	return first_date, second_date
+
+
 class TrainTestSplit(object):
-	def __init__(self, prediction_window, columns_info):
+
+	def __init__(self, prediction_window, columns_info, start_date: str, end_date: str):
 		self.prediction_window = prediction_window
 		self.columns_info = columns_info
+
+		self.split_dates = []
+		start_date = datetime.datetime.strptime(start_date, constants.DATE_FORMAT)
+		start_date = start_date.replace(day=1)
+		end_date = datetime.datetime.strptime(end_date, constants.DATE_FORMAT)
+
+		while start_date < datetime.datetime.strptime(get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window), constants.DATE_FORMAT):
+			first_date, second_date = get_two_dates_in_a_month(start_date)
+			if first_date < datetime.datetime.strptime(get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window), constants.DATE_FORMAT):
+				self.split_dates.append(first_date)
+			if second_date < datetime.datetime.strptime(get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window), constants.DATE_FORMAT):
+				self.split_dates.append(second_date)
+
+			# Incrementing months over time
+			start_date = increment_month(start_date)
+		print(self.split_dates)
+
 
 	'''
 	Takes a dict of pre-processed pandas dataframe and for each dataframe in the list and outputs a dict with all
@@ -20,45 +64,53 @@ class TrainTestSplit(object):
 	
 	{
 		'2020-01-04': {
-		'train': Dict[str, pd.DataSeries],
-		'test': df2
+			'train': Dict[str, pd.DataSeries],
+			'test': df2
 		}
 		...
 	} 
 
-	df1 structure:
+	df1 structure(Dict):
 	{
 		'stock_price': pd.DataSeries(Date->val)
 		...
 	}
 		
 
-	df2 structure:
+	df2 structure(pd.Series):
 		Columns -> Date, Stock Price
 
 	'''
+	'''
+		Set the start month as the first month of 2017 and end month as last month of 2020
+		for each month,
+			get a random number from 1-15 and pick a random from [13,14,15]
+			set the first date as the first random and second as first+the second one if feasible
+			append all these dates in a list
+		for each date,
+			get the data from the past according to the columns_info and make a dict similar to columns_info but, 
+			with data instead of length.
+		return dict of these dicts with keys as dates
+	'''
 
-	def do_split(self, df: Dict[str, pd.DataFrame], split_dates: List[str] = None):
+	def do_split(self, df: pd.DataFrame, split_dates: List[str] = None):
 		if not split_dates:
-			pass
-			'''
-				(for oil, stock and news columns, see if they exist)
-
-				Set the start month as the first month of 2017 and end month as last month of 2020
-				for each month,
-					get a random number from 1-15 and pick a random from [13,14,15]
-					set the first date as the first random and second as first+the second one if feasible
-					append all these dates in a list
-				for each date,
-					get the data from the past according to the columns_info and make a dict similar to columns_info but, 
-					with data instead of length.
-				return the dict man return the dict
-			'''
-			
-
+			split_dates = self.split_dates
 		else:
-			# not supporting split_dates. YET TO BE ADDED.
-			pass
+			split_dates = [datetime.datetime.strptime(split_date, constants.DATE_FORMAT) for split_date in split_dates]
+
+		return_data = {}
+		for split_date in split_dates:
+			splitted_data = {}
+			for columns in self.columns_info:
+				splitted_data[columns] = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), self.columns_info[columns]-1): split_date.strftime(constants.DATE_FORMAT)].loc[:, [columns]]
+			test_data = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -1): get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -self.prediction_window)].loc[:, [constants.STOCK_COLUMN]]
+			return_data[split_date] = {
+				'train': splitted_data,
+				'test': test_data
+			}
+
+		return return_data
 
 
 if __name__ == "__main__":

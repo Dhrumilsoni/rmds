@@ -68,8 +68,10 @@ class ModelFactory:
 
 @ModelFactory.register('test_model')
 class TestModel(object):
-	def __init__(self, split_date: str):
+	def __init__(self, split_date: str, company: str, hyperparams: Dict):
 		self.split_date = split_date
+		self.company = company
+		self.hyperparams = hyperparams
 		self._is_trained = False
 
 	def train(self, df: pd.DataFrame) -> None:

@@ -24,7 +24,7 @@ def main(config_pth: str):
     print(company_wise_dataframes)
     print(columns_info)
 
-    tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info)
+    tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE])
     evaluation = Evaluation()
 
     for company, df in company_wise_dataframes.items():
@@ -32,8 +32,10 @@ def main(config_pth: str):
         for date, train_test_data in date_splits.items():
             df_train = train_test_data[constants.TRAIN]
             df_test = train_test_data[constants.TEST]
+
+            model_args = {'split_date': date, 'company': company, 'hyperparams': config[constants.MODEL][constants.HYPERPARAMS]}
             model = ModelFactory.create_model(config[constants.MODEL][constants.NAME],
-                                              **config[constants.MODEL][constants.HYPERPARAMS])
+                                              **model_args)
             model.train(df_train)
             evaluation.add(model, df_test)
     evaluation.evaluate()
