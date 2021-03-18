@@ -1,0 +1,11 @@
+{
+  "csv_files": ["pth1", "pth2"],
+  "preprocessor_name": "smit_preprocessor",
+  "prediction_window": 7,
+  "model": {
+    "name": "test_model",
+    "hyperparams": {
+
+    }
+  }
+}
