@@ -18,7 +18,8 @@
       "past_horizon": {
         "stock_price": 400,
         "oil_price": 60
-      }
+      },
+      "training_samples": 120
     }
   }
 }
