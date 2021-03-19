@@ -112,9 +112,6 @@ class HoltWintersModel(Model):
 		self.stock_column_name = stock_column_name
 
 	def train(self, column_wise_series: Dict[str, pd.Series]) -> None:
-		print("Train on df:")
-		print(column_wise_series)
-		print("|||||||")
 		series = column_wise_series[self.stock_column_name]
 		self.model_instance = Holt(series, damped_trend=self.damped_trend,
 								   initialization_method=self.initialization_method).fit(optimized=True)
