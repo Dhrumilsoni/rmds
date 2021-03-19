@@ -33,10 +33,12 @@ def main(config_pth: str):
             df_train = train_test_data[constants.TRAIN]
             df_test = train_test_data[constants.TEST]
 
-            model_args = {'split_date': date, 'company': company, 'hyperparams': config[constants.MODEL][constants.HYPERPARAMS]}
+            # model_args = {'split_date': date, 'company': company, 'hyperparams': config[constants.MODEL][constants.HYPERPARAMS]}
+            hyperparams = config[constants.MODEL][constants.HYPERPARAMS]
             model = ModelFactory.create_model(config[constants.MODEL][constants.NAME],
-                                              **model_args)
+                                              split_date=date, company=company, **hyperparams)
             model.train(df_train)
+            model.summary()
             evaluation.add(model, df_test, df_train)
     evaluation.evaluate()
 

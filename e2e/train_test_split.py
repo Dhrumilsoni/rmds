@@ -46,17 +46,22 @@ class TrainTestSplit(object):
 		start_date = start_date.replace(day=1)
 		end_date = datetime.datetime.strptime(end_date, constants.DATE_FORMAT)
 
-		while start_date < datetime.datetime.strptime(get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window), constants.DATE_FORMAT):
+		while start_date < datetime.datetime.strptime(
+				get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window),
+				constants.DATE_FORMAT):
 			first_date, second_date = get_two_dates_in_a_month(start_date)
-			if first_date < datetime.datetime.strptime(get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window), constants.DATE_FORMAT):
+			if first_date < datetime.datetime.strptime(
+					get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window),
+					constants.DATE_FORMAT):
 				self.split_dates.append(first_date)
-			if second_date < datetime.datetime.strptime(get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window), constants.DATE_FORMAT):
+			if second_date < datetime.datetime.strptime(
+					get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window),
+					constants.DATE_FORMAT):
 				self.split_dates.append(second_date)
 
 			# Incrementing months over time
 			start_date = increment_month(start_date)
 		print(self.split_dates)
-
 
 	'''
 	Takes a dict of pre-processed pandas dataframe and for each dataframe in the list and outputs a dict with all
@@ -103,8 +108,11 @@ class TrainTestSplit(object):
 		for split_date in split_dates:
 			splitted_data = {}
 			for columns in self.columns_info:
-				splitted_data[columns] = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), self.columns_info[columns]-1): split_date.strftime(constants.DATE_FORMAT)].loc[:, [columns]]
-			test_data = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -1): get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -self.prediction_window)].loc[:, [constants.STOCK_COLUMN]]
+				splitted_data[columns] = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT),
+																self.columns_info[columns] - 1): split_date.strftime(
+					constants.DATE_FORMAT)].loc[:, [columns]]
+			test_data = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -1): get_date_minus_days(
+				split_date.strftime(constants.DATE_FORMAT), -self.prediction_window)].loc[:, [constants.STOCK_COLUMN]]
 
 			return_data[split_date] = {
 				'train': splitted_data,

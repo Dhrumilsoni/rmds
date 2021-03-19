@@ -19,7 +19,8 @@ def get_data_before(df:pd.DataFrame, timestr:str):
 	return df[df[DATE_] < timestr]
 
 def train_and_predict(df:pd.DataFrame, h:int):
-	series = pd.Series(df['Value'].values, index=df[DATE_])
+	# series = pd.Series(df['Value'].values, index=df[DATE_])
+	series = pd.Series(df['Value'].values, index=df.index)
 	fit = Holt(pd.Series(df['Value'].values, index=pd.to_datetime(df[DATE_])), damped_trend=False, initialization_method="estimated").fit(optimized=True)
 
 	fcast = fit.forecast(h)

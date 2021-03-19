@@ -119,7 +119,6 @@ class PreProcessorFactory:
 		""" Factory command to create the executor """
 
 		exec_class = cls.registry[name]
-		print(f'Extracted class: {exec_class}')
 		executor = exec_class(**kwargs)
 		return executor
 
@@ -154,7 +153,7 @@ class StockPreProcessor(AbstractPreProcessor):
 
 
 @PreProcessorFactory.register('stock_oil_preprocessor')
-class StockPreProcessor(AbstractPreProcessor):
+class StockOilPreProcessor(AbstractPreProcessor):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
