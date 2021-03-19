@@ -1,5 +1,5 @@
 from typing import Dict
-from e2e.model.model import ModelFactory, Model
+from e2e.models.model import ModelFactory, Model
 import pandas as pd
 
 

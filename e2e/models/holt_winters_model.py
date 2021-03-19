@@ -1,5 +1,5 @@
 from typing import Dict
-from e2e.model.model import ModelFactory, Model
+from e2e.models.model import ModelFactory, Model
 import pandas as pd
 from statsmodels.tsa.api import Holt
 from statsmodels.tsa.holtwinters.results import HoltWintersResults
@@ -32,9 +32,9 @@ class HoltWintersModel(Model):
         pd.Series containing the forecasts indexed by date
     '''
 
-    def predict(self, h: int) -> pd.Series:
+    def predict(self, h: int) -> (pd.Series, Dict):
         fcast = self.model_instance.forecast(h)
-        return fcast
+        return fcast, {}
 
     def summary(self):
         print(self.model_instance.summary())
