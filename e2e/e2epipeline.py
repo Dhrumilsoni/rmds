@@ -1,6 +1,6 @@
 import argparse
 from preprocessing import PreProcessorFactory
-from model import ModelFactory
+from e2e.model.model import ModelFactory
 from train_test_split import TrainTestSplit
 from evaluation import Evaluation
 import constants
@@ -25,7 +25,7 @@ def main(config_pth: str):
     print(columns_info)
 
     tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE])
-    evaluation = Evaluation()
+    evaluation = Evaluation(config[constants.PREDICTION_WINDOW])
 
     for company, df in company_wise_dataframes.items():
         date_splits = tts.do_split(df)

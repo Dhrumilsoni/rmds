@@ -1,5 +1,5 @@
 import argparse
-from model import Model
+from e2e.model.model import Model
 import pandas as pd
 from typing import Dict
 
@@ -22,14 +22,23 @@ def parse_args():
 
 class Evaluation(object):
 
-	def __init__(self):
-		pass
+	def __init__(self, prediction_window):
+		self.prediction_window = prediction_window
+		self.results = {}
 
 	def evaluate(self):
-		pass
+		print(self.results)
 
 	def add(self, model: Model, df_test_ground_truth: pd.DataFrame, df_train: Dict[str, pd.DataFrame]):
-		pass
+		prediction, confidence_interval = model.predict(self.prediction_window)
+		if model.company not in self.results:
+			self.results[model.company] = {}
+		self.results[model.company][model.split_date] = {
+			"train_data": df_train,
+			"test_gt": df_test_ground_truth,
+			"test_prediction": prediction
+		}
+
 
 
 if __name__ == "__main__":
