@@ -59,6 +59,7 @@ class ModelFactory:
 
 	@classmethod
 	def register(cls, name: str) -> Callable:
+		print(name)
 		def inner_wrapper(wrapped_class: Model) -> Callable:
 			if name in cls.registry:
 				print('Executor %s already exists. Will replace it', name)

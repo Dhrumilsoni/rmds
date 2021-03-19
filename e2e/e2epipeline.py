@@ -1,6 +1,6 @@
 import argparse
 from preprocessing import PreProcessorFactory
-from e2e.model.model import ModelFactory
+from e2e.models.model import ModelFactory
 from train_test_split import TrainTestSplit
 from evaluation import Evaluation
 import constants
@@ -21,8 +21,8 @@ def main(config_pth: str):
                                                            **config[constants.PREPROCESSOR_ARGS])
     company_wise_dataframes, columns_info = preprocessor.preprocess(config[constants.PREPROCESSOR_ARGS][constants.CSV_FILES])
 
-    print(company_wise_dataframes)
-    print(columns_info)
+    # print(company_wise_dataframes)
+    # print(columns_info)
 
     tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE])
     evaluation = Evaluation(config[constants.PREDICTION_WINDOW])

@@ -1,5 +1,5 @@
 import argparse
-from e2e.model.model import Model
+from e2e.models.model import Model
 import pandas as pd
 from typing import Dict
 
