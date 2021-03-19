@@ -97,6 +97,7 @@ class Evaluation(object):
 				plotting_serieses = self.get_plotting_serieses(output_instance)
 				plt.figure(figsize=(12,5))
 				plt.xlabel("time")
+				plt.title(f"{company}")
 
 				for s in plotting_serieses:
 					ax = plotting_serieses[s].plot(grid=True, label=s)
