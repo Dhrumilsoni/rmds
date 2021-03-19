@@ -37,8 +37,8 @@ def main(config_pth: str):
             hyperparams = config[constants.MODEL][constants.HYPERPARAMS]
             model = ModelFactory.create_model(config[constants.MODEL][constants.NAME],
                                               split_date=date, company=company, **hyperparams)
-            model.train(df_train)
-            model.summary()
+            model.train(df_train, config[constants.PREDICTION_WINDOW])
+            # model.summary()
             evaluation.add(model, df_test, df_train)
     evaluation.evaluate()
 

@@ -3,8 +3,8 @@
     "csv_files": ["dataset/stock_exchange.csv", "dataset/commodity.csv"],
     "preprocessor_name": "stock_oil_preprocessor",
     "past_horizon": {
-      "stock_price": 400,
-      "oil_price": 60
+      "stock_price": 1000,
+      "oil_price": 1000
     },
     "start_date": "2019-01-01",
     "end_date": "2020-12-31"
@@ -13,9 +13,12 @@
 
   "prediction_window": 7,
   "model": {
-    "name": "test_model",
+    "name": "mock_ML_model",
     "hyperparams": {
-
+      "past_horizon": {
+        "stock_price": 400,
+        "oil_price": 60
+      }
     }
   }
 }

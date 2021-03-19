@@ -17,7 +17,7 @@ class HoltWintersModel(Model):
         assert stock_column_name is not None
         self.stock_column_name = stock_column_name
 
-    def train(self, column_wise_series: Dict[str, pd.Series]) -> None:
+    def train(self, column_wise_series: Dict[str, pd.Series], prediction_widow) -> None:
         series = column_wise_series[self.stock_column_name]
         self.model_instance = Holt(series, damped_trend=self.damped_trend,
                                    initialization_method=self.initialization_method).fit(optimized=True)
