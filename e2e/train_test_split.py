@@ -61,7 +61,7 @@ class TrainTestSplit(object):
 
 			# Incrementing months over time
 			start_date = increment_month(start_date)
-		print(self.split_dates)
+		# print(self.split_dates)
 
 	'''
 	Takes a dict of pre-processed pandas dataframe and for each dataframe in the list and outputs a dict with all
