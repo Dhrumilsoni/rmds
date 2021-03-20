@@ -27,8 +27,12 @@ def main(config_pth: str):
     tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE])
     evaluation = Evaluation(config[constants.PREDICTION_WINDOW])
 
+    if "split_date" not in config:
+        split_dates = None
+    else:
+        split_dates = config["split_date"]
     for company, df in company_wise_dataframes.items():
-        date_splits = tts.do_split(df)
+        date_splits = tts.do_split(df, split_dates)
         for date, train_test_data in date_splits.items():
             df_train = train_test_data[constants.TRAIN]
             df_test = train_test_data[constants.TEST]

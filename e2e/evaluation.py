@@ -33,7 +33,7 @@ class Evaluation(object):
 		self.prediction_window = prediction_window
 		self.results = {}
 		self.evaluation = {}
-		self.num_train_days_to_include = self.prediction_window*20
+		self.num_train_days_to_include = self.prediction_window*5
 		now = datetime.datetime.now()
 		dt_string = now.strftime("%d-%m-%Y-%H-%M-%S")
 		self.folder_name = dt_string

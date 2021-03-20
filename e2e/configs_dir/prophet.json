@@ -13,10 +13,6 @@
 
   "prediction_window": 100,
   "model": {
-    "name": "prophet_model",
-    "hyperparams": {
-      "damped_trend": true,
-      "stock_column_name": "stock_price"
-    }
+    "name": "prophet_model"
   }
 }

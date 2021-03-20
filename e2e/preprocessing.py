@@ -18,6 +18,11 @@ class AbstractPreProcessor:
 		self.past_horizon = kwargs[constants.PAST_HORIZON]
 		self.start_date = kwargs[constants.START_DATE]
 		self.end_date = kwargs[constants.END_DATE]
+		if constants.COMPANIES in kwargs:
+			self.companies = kwargs[constants.COMPANIES]
+		else:
+			self.companies = None
+
 
 	'''
 	Takes a list of csv files and returns dict of dataframes keyed by company names.
@@ -51,7 +56,8 @@ class AbstractPreProcessor:
 
 		stock_dfs = {}
 		for company in stock_df.stock_name.unique():
-			stock_dfs[company] = stock_df.loc[stock_df["stock_name"] == company, [constants.STOCK_COLUMN]]
+			if self.companies is None or company in self.companies:
+				stock_dfs[company] = stock_df.loc[stock_df["stock_name"] == company, [constants.STOCK_COLUMN]]
 
 		for company, df in stock_dfs.items():
 			stock_dfs[company] = AbstractPreProcessor.set_missing_dates_ffill(df)
