@@ -13,6 +13,9 @@
 
   "prediction_window": 100,
   "model": {
-    "name": "prophet_model"
+    "name": "prophet_model",
+    "hyperparams": {
+
+    }
   }
 }

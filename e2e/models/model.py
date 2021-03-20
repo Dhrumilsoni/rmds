@@ -41,6 +41,15 @@ class Model(object):
 	
 	:return
 	pd.Series containing the forecasts indexed by date
+	dict containing confidence interval
+	
+	dict: {
+		"95" : [
+				lower_bound_series indexed by date,
+				upper_bound_series indexed by date
+				],
+		...
+	}
 	'''
 
 	@abstractmethod
