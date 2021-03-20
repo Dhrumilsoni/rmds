@@ -19,7 +19,7 @@ class ProphetMultifeatureModel(Model):
             "ds": ds_value,
             "y": np.array(y_value).reshape(len(y_value), )
         }
-        print(column_wise_series)
+        # print(column_wise_series)
         for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN]+1):
             temp = column_wise_series[constants.NEWS_LAG_PREFIX+str(past_days)].values
             stock_dict[constants.NEWS_LAG_PREFIX + str(past_days)] = np.array(temp).reshape(len(temp), )
@@ -55,9 +55,10 @@ class ProphetMultifeatureModel(Model):
         columns_future = list(future.columns)
         columns_future.remove('ds2')
         future = future.loc[:, columns_future]
+
         forecast = self.ml.predict(future[-h:])
         forecast = forecast.set_index("ds")
-        print(type(forecast['yhat']))
+        # print(type(forecast['yhat']))
         conf_interval = {}
         conf_interval["95"] = [forecast["yhat_lower"], forecast["yhat_upper"]]
         return forecast["yhat"], conf_interval

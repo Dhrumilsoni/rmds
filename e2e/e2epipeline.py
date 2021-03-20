@@ -23,14 +23,19 @@ def main(config_pth: str):
 
     # print(company_wise_dataframes)
     # print(columns_info)
+    if "split_method" in config:
+        split_method = config["split_method"]
+    else:
+        split_method = "bi-monthly"
 
-    tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE])
+    tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE], split_method=split_method)
     evaluation = Evaluation(config[constants.PREDICTION_WINDOW])
 
     if "split_date" not in config:
         split_dates = None
     else:
         split_dates = config["split_date"]
+
     for company, df in company_wise_dataframes.items():
         date_splits = tts.do_split(df, split_dates)
         for date, train_test_data in date_splits.items():

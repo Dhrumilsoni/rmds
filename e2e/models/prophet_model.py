@@ -26,7 +26,7 @@ class ProphetModel(Model):
         self.ml.add_country_holidays(country_name="US")
         self.ml.fit(df)
 
-    def predict(self, h: int) -> (pd.Series, Dict):
+    def predict(self, h: int, column_wise_series: Dict[str, pd.Series]) -> (pd.Series, Dict):
         future = self.ml.make_future_dataframe(periods=h)
         forecast = self.ml.predict(future[-h:])
         forecast = forecast.set_index("ds")

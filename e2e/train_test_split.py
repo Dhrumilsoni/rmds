@@ -37,7 +37,7 @@ def get_two_dates_in_a_month(start_date):
 
 class TrainTestSplit(object):
 
-	def __init__(self, prediction_window, columns_info, start_date: str, end_date: str):
+	def __init__(self, prediction_window, columns_info, start_date: str, end_date: str, split_method = "bi-monthly"):
 		self.prediction_window = prediction_window
 		self.columns_info = columns_info
 
@@ -46,6 +46,12 @@ class TrainTestSplit(object):
 		start_date = start_date.replace(day=1)
 		end_date = datetime.datetime.strptime(end_date, constants.DATE_FORMAT)
 
+		if split_method == 'daily':
+			self.split_dates_daily(start_date, end_date)
+		else:
+			self.split_dates_bimonthly(start_date, end_date)
+
+	def split_dates_bimonthly(self, start_date, end_date):
 		while start_date < datetime.datetime.strptime(
 				get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window),
 				constants.DATE_FORMAT):
@@ -61,7 +67,16 @@ class TrainTestSplit(object):
 
 			# Incrementing months over time
 			start_date = increment_month(start_date)
-		# print(self.split_dates)
+
+	def split_dates_daily(self, start_date, end_date):
+		while start_date < datetime.datetime.strptime(
+				get_date_minus_days(end_date.strftime(constants.DATE_FORMAT), self.prediction_window),
+				constants.DATE_FORMAT):
+
+			self.split_dates.append(start_date)
+
+			# Increment day over time
+			start_date = datetime.datetime.strptime(get_date_minus_days(start_date.strftime(constants.DATE_FORMAT), -1), constants.DATE_FORMAT)
 
 	'''
 	Takes a dict of pre-processed pandas dataframe and for each dataframe in the list and outputs a dict with all

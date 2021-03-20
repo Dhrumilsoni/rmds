@@ -1,23 +1,24 @@
 {
   "preprocessor_args": {
     "csv_files": ["dataset/stock_exchange.csv", "dataset/all_company_news.csv"],
-    "companies": ["MARATHON OIL CORPORATION"],
+    "companies": ["CHEVRON CORPORATION"],
     "preprocessor_name": "stock_news_preprocessor",
     "past_horizon": {
-      "stock_price": 400,
-      "news_sentiment": 5
+      "stock_price": 100,
+      "news_sentiment": 2
     },
     "start_date": "2017-01-01",
-    "end_date": "2018-07-31"
+    "end_date": "2017-01-31"
   },
-
-  "prediction_window": 100,
+  "split_date": ["2017-01-15"],
+  "split_method": "daily",
+  "prediction_window": 7,
   "model": {
     "name": "prophet_multifeature_model",
     "hyperparams": {
       "past_horizon": {
-        "stock_price": 400,
-        "news_sentiment": 5
+        "stock_price": 100,
+        "news_sentiment": 2
       }
     }
   }
