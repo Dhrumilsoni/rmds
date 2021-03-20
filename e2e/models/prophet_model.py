@@ -30,7 +30,9 @@ class ProphetModel(Model):
         future = self.ml.make_future_dataframe(periods=h)
         forecast = self.ml.predict(future[-h:])
         forecast = forecast.set_index("ds")
-        return forecast["yhat"], {}
+        conf_interval = {}
+        conf_interval["95"] = [forecast["yhat_lower"], forecast["yhat_upper"]]
+        return forecast["yhat"], conf_interval
 
 
 

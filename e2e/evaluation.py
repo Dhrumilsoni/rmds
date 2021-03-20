@@ -115,6 +115,11 @@ class Evaluation(object):
 					ax = plotting_serieses[s].plot(grid=True, label=s)
 					ax.legend(loc=2)
 
+				for conf in output_instance["test_confidence_interval"]:
+					lower_bound = output_instance["test_confidence_interval"][conf][0]
+					upper_bound = output_instance["test_confidence_interval"][conf][1]
+					plt.fill_between(lower_bound.index, lower_bound, upper_bound, alpha=0.2)
+
 				folder = self.get_plot_folder(company)
 				file_name = "{}.png".format(date)
 				path = os.path.join(folder, file_name)
