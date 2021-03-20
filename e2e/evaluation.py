@@ -8,7 +8,8 @@ import json
 from utils import Stats
 import numpy as np
 import matplotlib.pyplot as plt
-
+import os
+import datetime
 
 def parse_args():
 	parser = argparse.ArgumentParser()
@@ -33,6 +34,9 @@ class Evaluation(object):
 		self.results = {}
 		self.evaluation = {}
 		self.num_train_days_to_include = self.prediction_window*20
+		now = datetime.datetime.now()
+		dt_string = now.strftime("%d-%m-%Y-%H-%M-%S")
+		self.folder_name = dt_string
 
 	def getRMSE(self, series1: pd.Series, series2: pd.Series):
 		return ((series1 - series2) ** 2).mean() ** .5
@@ -90,12 +94,20 @@ class Evaluation(object):
 		plt.setp(plt.gca().get_xticklabels(), rotation=-45, horizontalalignment='left')
 		plt.show()
 
+	def get_plot_folder(self, company):
+		dir_path = os.path.join("results", self.folder_name, company)
+		if not os.path.exists(dir_path):
+			os.mkdir(dir_path)
+		return dir_path
+
 	def create_plots(self):
+		os.mkdir(os.path.join("results", self.folder_name))
+
 		for company in self.results:
 			for date in self.results[company]:
 				output_instance = self.results[company][date]
 				plotting_serieses = self.get_plotting_serieses(output_instance)
-				plt.figure(figsize=(12,5))
+				fig = plt.figure(figsize=(12,5))
 				plt.xlabel("time")
 				plt.title(f"{company}")
 
@@ -103,9 +115,11 @@ class Evaluation(object):
 					ax = plotting_serieses[s].plot(grid=True, label=s)
 					ax.legend(loc=2)
 
-				plt.show()
-
-				break
+				folder = self.get_plot_folder(company)
+				file_name = "{}.png".format(date)
+				path = os.path.join(folder, file_name)
+				plt.savefig(path)
+				plt.close(fig)
 
 		self.create_bar_chart("RMSE")
 

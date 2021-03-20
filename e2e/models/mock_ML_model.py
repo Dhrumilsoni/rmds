@@ -12,8 +12,9 @@ class MockMLModel(Model):
 
 
     def train(self, column_wise_series: Dict[str, pd.Series], prediction_window) -> None:
-        data = self.generate_training_data(column_wise_series, prediction_window)
-        print(len(data))
+        pass
+        # data = self.generate_training_data(column_wise_series, prediction_window)
+        # print(len(data))
 
     def predict(self, h: int) -> (pd.Series, Dict):
         return pd.Series(7, index=pd.date_range(get_date_minus_days(self.split_date.strftime(constants.DATE_FORMAT), -1), get_date_minus_days(self.split_date.strftime(constants.DATE_FORMAT), -h))), {}
