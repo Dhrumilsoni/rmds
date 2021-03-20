@@ -111,8 +111,16 @@ class TrainTestSplit(object):
 				splitted_data[columns] = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT),
 																self.columns_info[columns] - 1): split_date.strftime(
 					constants.DATE_FORMAT)].loc[:, [columns]]
-			test_data = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -1): get_date_minus_days(
+
+			test_data = {}
+			test_data[constants.STOCK_COLUMN] = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT), -1): get_date_minus_days(
 				split_date.strftime(constants.DATE_FORMAT), -self.prediction_window)].loc[:, [constants.STOCK_COLUMN]]
+			for col in range(1, len([1 for c_name in self.columns_info.keys() if constants.NEWS_LAG_PREFIX==c_name[:len(constants.NEWS_LAG_PREFIX)]])+1):
+				col_name = constants.NEWS_LAG_PREFIX+str(col)
+				test_data[col_name] = df[get_date_minus_days(split_date.strftime(constants.DATE_FORMAT),
+																		   -1): get_date_minus_days(
+					split_date.strftime(constants.DATE_FORMAT), -self.prediction_window)].iloc[:col , [list(df.columns).index(col_name)]]
+
 
 			return_data[split_date] = {
 				'train': splitted_data,

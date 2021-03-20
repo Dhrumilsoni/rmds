@@ -53,7 +53,7 @@ class Model(object):
 	'''
 
 	@abstractmethod
-	def predict(self, h: int) -> (pd.Series, Dict):
+	def predict(self, h: int, column_wise_series: Dict[str, pd.Series]) -> (pd.Series, Dict):
 		pass
 
 	@abstractmethod

@@ -1,21 +1,24 @@
 {
   "preprocessor_args": {
-    "csv_files": ["dataset/stock_exchange.csv"],
+    "csv_files": ["dataset/stock_exchange.csv", "dataset/all_company_news.csv"],
     "companies": ["MARATHON OIL CORPORATION"],
-    "preprocessor_name": "stock_preprocessor",
+    "preprocessor_name": "stock_news_preprocessor",
     "past_horizon": {
-      "stock_price": 400
+      "stock_price": 400,
+      "news_sentiment": 5
     },
     "start_date": "2017-01-01",
     "end_date": "2018-07-31"
   },
-  "split_date": ["2018-03-01"],
 
   "prediction_window": 100,
   "model": {
-    "name": "prophet_model",
+    "name": "prophet_multifeature_model",
     "hyperparams": {
-
+      "past_horizon": {
+        "stock_price": 400,
+        "news_sentiment": 5
+      }
     }
   }
 }

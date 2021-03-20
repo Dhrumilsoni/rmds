@@ -95,13 +95,13 @@ class Evaluation(object):
 		plt.show()
 
 	def get_plot_folder(self, company):
-		dir_path = os.path.join("results", self.folder_name, company)
+		dir_path = os.path.join("results", self.folder_name, company).replace(" ", "_").replace(":", "-")
 		if not os.path.exists(dir_path):
-			os.mkdir(dir_path)
+			os.makedirs(dir_path)
 		return dir_path
 
 	def create_plots(self):
-		os.mkdir(os.path.join("results", self.folder_name))
+		os.makedirs(os.path.join("results", self.folder_name))
 
 		for company in self.results:
 			for date in self.results[company]:
@@ -123,6 +123,7 @@ class Evaluation(object):
 				folder = self.get_plot_folder(company)
 				file_name = "{}.png".format(date)
 				path = os.path.join(folder, file_name)
+				path = path.replace(" ", "_").replace(":", "-")
 				plt.savefig(path)
 				plt.close(fig)
 
@@ -140,13 +141,19 @@ class Evaluation(object):
 
 		self.create_plots()
 
-	def add(self, model: Model, df_test_ground_truth: pd.DataFrame, df_train: Dict[str, pd.DataFrame]):
-		prediction, confidence_interval = model.predict(self.prediction_window)
+	def add(self, model: Model, df_test_ground_truth: Dict[str, pd.Series], df_train: Dict[str, pd.DataFrame]):
+		df_test_for_prediction = {}
+		for col in df_test_ground_truth:
+			if col != constants.STOCK_COLUMN:
+				df_test_for_prediction[col] = df_test_ground_truth[col]
+
+		# df_test_ground_truth = pd.DataFrame({constants.STOCK_COLUMN: df_test_ground_truth[constants.STOCK_COLUMN]})
+		prediction, confidence_interval = model.predict(self.prediction_window, df_test_for_prediction)
 		if model.company not in self.results:
 			self.results[model.company] = {}
 		self.results[model.company][model.split_date] = {
 			"train_data": df_train,
-			"test_gt": df_test_ground_truth[constants.STOCK_COLUMN],
+			"test_gt": df_test_ground_truth[constants.STOCK_COLUMN][constants.STOCK_COLUMN],
 			"test_prediction": prediction,
 			"test_confidence_interval": confidence_interval
 		}

@@ -77,8 +77,8 @@ class AbstractPreProcessor:
 
 	def read_news_file(self, news_file):
 		news_df = pd.read_csv(news_file)
-		news_df = news_df.loc[:, ["Date Value", "Value", "Stock Name"]]
-		news_df.columns = ["date", constants.NEWS_COLUMN, "stock_name"]
+		news_df = news_df.loc[:, ["Date Published", "News Sentiment", "Sentiment Magnitude", "Stock Name"]]
+		news_df.columns = ["date", "News Sentiment", "Sentiment Magnitude", "stock_name"]
 		news_df["date"] = pd.to_datetime(news_df["date"], format=constants.DATE_FORMAT)
 		news_df = news_df.set_index("date")
 
@@ -86,7 +86,9 @@ class AbstractPreProcessor:
 		for company in news_df.stock_name.unique():
 			# if companies is not defined in the config include all companies
 			if self.companies is None or company in self.companies:
-				news_dfs[company] = news_df.loc[news_df["stock_name"] == company, [constants.NEWS_COLUMN]]
+				news_dfs[company] = news_df.loc[news_df["stock_name"] == company, ['News Sentiment', 'Sentiment Magnitude']]
+				news_dfs[company][constants.NEWS_COLUMN] = news_dfs[company]['News Sentiment']*news_dfs[company]['Sentiment Magnitude']
+				news_dfs[company] = news_dfs[company].loc[:, [constants.NEWS_COLUMN]]
 				news_dfs[company] = news_dfs[company].sort_index()
 				news_dfs[company] = news_dfs[company].resample('D').mean().fillna(method='ffill')
 
@@ -136,8 +138,12 @@ class AbstractPreProcessor:
 		company_df = company_wise_df[list(company_wise_df.keys())[0]]
 		if self.past_horizon:
 			for col in self.past_horizon:
+				if col == constants.NEWS_COLUMN:
+					for past_days in range(1, self.past_horizon[col]+1):
+						columns_info[constants.NEWS_LAG_PREFIX+str(past_days)] = self.past_horizon[constants.STOCK_COLUMN]
 				if col in company_df.columns:
 					columns_info[col] = self.past_horizon[col]
+
 
 		return columns_info
 
@@ -218,7 +224,7 @@ class StockNewsPreProcessor(AbstractPreProcessor):
 	'''
 	csvFiles: ["stock_exchange.csv", "all_news.csv"]
 	'''
-
+	# TODO: exxon is not included in news_file. Please FIX!
 	def preprocess(self, csvFiles: List[str]) -> Tuple[Dict[str, pd.DataFrame], Dict]:
 		company_wise_dataframes = {}
 		stock_file = csvFiles[0]
@@ -226,19 +232,23 @@ class StockNewsPreProcessor(AbstractPreProcessor):
 		stock_df = self.read_stock_file(stock_file)
 		news_df = self.read_news_file(news_file)
 
+
+
 		for company in stock_df:
-			for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN]):
+			for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN]+1):
 				# create column for each past_days and subtract the current date and get the fucking value.
-				news_df[company]['news_lag_'+str(past_days)] = news_df[company][constants.NEWS_COLUMN].shift(periods=past_days)
+				news_df[company][constants.NEWS_LAG_PREFIX+str(past_days)] = news_df[company][constants.NEWS_COLUMN].shift(periods=past_days)
 			news_df[company] = news_df[company].dropna()
-			news_df[company] = news_df[company].drop(columns=constants.NEWS_COLUMN)
+			# news_df[company] = news_df[company].drop(columns=constants.NEWS_COLUMN)
 
 		for company in stock_df:
 			company_wise_dataframes[company] = self.merge_dfs(stock_df[company], news_df[company])
 
 		column_info = self.create_columns_info(company_wise_dataframes)
 
-		print(list(stock_df.items())[0])
+		
 
+		with pd.option_context('display.max_rows', 100, 'display.max_columns', 100):
+			print(list(company_wise_dataframes.items())[0][1])
 		return company_wise_dataframes, column_info
 
