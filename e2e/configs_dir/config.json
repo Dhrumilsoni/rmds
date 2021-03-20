@@ -4,9 +4,10 @@
     "companies": ["MARATHON OIL CORPORATION"],
     "preprocessor_name": "stock_preprocessor",
     "past_horizon": {
-      "stock_price": 400
+      "stock_price": 400,
+      "news_sentiment": 50
     },
-    "start_date": "2017-01-01",
+    "start_date": "1600-01-01",
     "end_date": "2018-07-31"
   },
   "split_date": ["2018-03-01"],

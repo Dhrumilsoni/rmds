@@ -75,6 +75,35 @@ class AbstractPreProcessor:
 
 		return stock_dfs
 
+	def read_news_file(self, news_file):
+		news_df = pd.read_csv(news_file)
+		news_df = news_df.loc[:, ["Date Value", "Value", "Stock Name"]]
+		news_df.columns = ["date", constants.NEWS_COLUMN, "stock_name"]
+		news_df["date"] = pd.to_datetime(news_df["date"], format=constants.DATE_FORMAT)
+		news_df = news_df.set_index("date")
+
+		news_dfs = {}
+		for company in news_df.stock_name.unique():
+			# if companies is not defined in the config include all companies
+			if self.companies is None or company in self.companies:
+				news_dfs[company] = news_df.loc[news_df["stock_name"] == company, [constants.NEWS_COLUMN]]
+				news_dfs[company] = news_dfs[company].sort_index()
+				news_dfs[company] = news_dfs[company].resample('D').mean().fillna(method='ffill')
+
+		# Check if all dates are valid or not!
+		for company, df in news_dfs.items():
+			val = df[self.start_date:self.start_date]
+			assert len(val), company+" stock doesn't have start_date value"
+
+			stock_start_date = get_date_minus_days(self.start_date, self.past_horizon[constants.NEWS_COLUMN])
+			val = df[stock_start_date:stock_start_date]
+			assert len(val), company+" stock doesn't have start_date-stock_days value"
+
+			val = df[self.end_date:self.end_date]
+			assert len(val), company+" stock doesn't have end_date value"
+
+		return news_dfs
+
 	def read_commodity_file(self, commodity_file):
 		commodity_df = pd.read_csv(commodity_file)
 		commodity_df = commodity_df.loc[commodity_df["Commodity And Exchange"] == "WTI CRUDE OIL (DOLLARS PER BARREL)", ["Date Value", "Value"]]
@@ -111,7 +140,6 @@ class AbstractPreProcessor:
 					columns_info[col] = self.past_horizon[col]
 
 		return columns_info
-
 
 
 class PreProcessorFactory:
@@ -180,3 +208,37 @@ class StockOilPreProcessor(AbstractPreProcessor):
 
 		column_info = self.create_columns_info(company_wise_dataframes)
 		return company_wise_dataframes, column_info
+
+
+@PreProcessorFactory.register('stock_news_preprocessor')
+class StockNewsPreProcessor(AbstractPreProcessor):
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+
+	'''
+	csvFiles: ["stock_exchange.csv", "all_news.csv"]
+	'''
+
+	def preprocess(self, csvFiles: List[str]) -> Tuple[Dict[str, pd.DataFrame], Dict]:
+		company_wise_dataframes = {}
+		stock_file = csvFiles[0]
+		news_file = csvFiles[1]
+		stock_df = self.read_stock_file(stock_file)
+		news_df = self.read_news_file(news_file)
+
+		for company in stock_df:
+			for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN]):
+				# create column for each past_days and subtract the current date and get the fucking value.
+				news_df[company]['news_lag_'+str(past_days)] = news_df[company][constants.NEWS_COLUMN].shift(periods=past_days)
+			news_df[company] = news_df[company].dropna()
+			news_df[company] = news_df[company].drop(columns=constants.NEWS_COLUMN)
+
+		for company in stock_df:
+			company_wise_dataframes[company] = self.merge_dfs(stock_df[company], news_df[company])
+
+		column_info = self.create_columns_info(company_wise_dataframes)
+
+		print(list(stock_df.items())[0])
+
+		return company_wise_dataframes, column_info
+
