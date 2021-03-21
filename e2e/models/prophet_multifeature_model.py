@@ -56,7 +56,7 @@ class ProphetMultifeatureModel(Model):
         columns_future.remove('ds2')
         future = future.loc[:, columns_future]
 
-        forecast = self.ml.predict(future[-h:])
+        forecast = self.ml.predict(future[:])
         forecast = forecast.set_index("ds")
         # print(type(forecast['yhat']))
         conf_interval = {}

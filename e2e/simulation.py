@@ -86,6 +86,10 @@ class S1Simulator(AbstractSimulator):
                 df_test_for_prediction[col] = df_test_ground_truth[col]
 
         prediction, confidence_interval = model.predict(self.prediction_window, df_test_for_prediction)
+        prediction = prediction[-self.prediction_window:]
+        for interval in confidence_interval:
+            confidence_interval[interval][0] = confidence_interval[interval][0][-self.prediction_window:]
+            confidence_interval[interval][1] = confidence_interval[interval][1][-self.prediction_window:]
         self.stock_val[model.company] = self.stock_val.get(model.company, {
                                                                     "date": [],
                                                                     "cur_val": [],
@@ -136,6 +140,10 @@ class S2Simulator(AbstractSimulator):
                 df_test_for_prediction[col] = df_test_ground_truth[col]
 
         prediction, confidence_interval = model.predict(self.prediction_window, df_test_for_prediction)
+        prediction = prediction[-self.prediction_window:]
+        for interval in confidence_interval:
+            confidence_interval[interval][0] = confidence_interval[interval][0][-self.prediction_window:]
+            confidence_interval[interval][1] = confidence_interval[interval][1][-self.prediction_window:]
         self.stock_val[model.company] = self.stock_val.get(model.company, {
                                                                     "date": [],
                                                                     "cur_val": [],
@@ -187,6 +195,10 @@ class S3Simulator(AbstractSimulator):
                 df_test_for_prediction[col] = df_test_ground_truth[col]
 
         prediction, confidence_interval = model.predict(self.prediction_window, df_test_for_prediction)
+        prediction = prediction[-self.prediction_window:]
+        for interval in confidence_interval:
+            confidence_interval[interval][0] = confidence_interval[interval][0][-self.prediction_window:]
+            confidence_interval[interval][1] = confidence_interval[interval][1][-self.prediction_window:]
         self.stock_val[model.company] = self.stock_val.get(model.company, {
                                                                     "date": [],
                                                                     "cur_val": [],

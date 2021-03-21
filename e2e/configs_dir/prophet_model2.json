@@ -1,0 +1,27 @@
+{
+  "preprocessor_args": {
+    "csv_files": ["dataset/stock_exchange.csv", "dataset/commodity.csv" ,"dataset/all_company_news.csv"],
+    "companies": ["CHEVRON CORPORATION"],
+    "preprocessor_name": "stock_oil_news_preprocessor",
+    "past_horizon": {
+      "stock_price": 100,
+      "oil_price": 100,
+      "news": 100
+    },
+    "start_date": "2017-01-01",
+    "end_date": "2017-05-31"
+  },
+  "split_date": ["2017-01-15", "2017-02-15", "2017-03-15", "2017-04-15", "2017-05-15"],
+  "split_method": "daily",
+  "prediction_window": 7,
+  "model": {
+    "name": "prophet_multifeature_model2",
+    "hyperparams": {
+      "past_horizon": {
+        "stock_price": 100,
+        "oil_price": 100,
+        "news": 100
+      }
+    }
+  }
+}

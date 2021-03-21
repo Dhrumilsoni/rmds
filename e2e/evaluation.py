@@ -66,8 +66,10 @@ class Evaluation(object):
         train_data = output_instance["train_data"]
         test_gt = output_instance["test_gt"]
         test_pred = output_instance["test_prediction"]
+        train_pred = output_instance["train_prediction"]
 
         return_dict["test_pred"] = test_pred
+        return_dict["train_pred"] = train_pred[-self.num_train_days_to_include:]
 
         stock_price_series = self.append_train_data(test_gt, train_data[constants.STOCK_COLUMN][constants.STOCK_COLUMN])
         return_dict[constants.STOCK_COLUMN] = stock_price_series
@@ -150,10 +152,19 @@ class Evaluation(object):
         prediction, confidence_interval = model.predict(self.prediction_window, df_test_for_prediction)
         if model.company not in self.results:
             self.results[model.company] = {}
+        test_prediction = None
+        train_prediction = None
+        assert len(prediction) >= self.prediction_window, "Predicted for less then window size"
+        if len(prediction) > self.prediction_window:
+            test_prediction = prediction[-self.prediction_window:]
+            train_prediction = prediction[:-self.prediction_window]
+        else:
+            test_prediction = prediction
         self.results[model.company][model.split_date] = {
             "train_data": df_train,
             "test_gt": df_test_ground_truth[constants.STOCK_COLUMN][constants.STOCK_COLUMN],
-            "test_prediction": prediction,
+            "test_prediction": test_prediction,
+            "train_prediction": train_prediction,
             "test_confidence_interval": confidence_interval
         }
 
