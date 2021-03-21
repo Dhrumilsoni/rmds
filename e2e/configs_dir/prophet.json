@@ -8,8 +8,9 @@
       "news_sentiment": 0
     },
     "start_date": "2017-01-01",
-    "end_date": "2017-12-30"
+    "end_date": "2017-01-31"
   },
+  "split_date": ["2017-01-15"],
   "split_method": "daily",
   "prediction_window": 7,
   "model": {
@@ -21,7 +22,7 @@
       }
     }
   },
-  "simulator": "S3",
+  "simulator": "S1",
   "simulator_args": {
     "initial_amount": 1000,
     "stock": ["CHEVRON CORPORATION"]

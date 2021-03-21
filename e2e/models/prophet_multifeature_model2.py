@@ -15,19 +15,12 @@ class ProphetMultifeatureModel2(Model):
         ds_value = column_wise_series[constants.STOCK_COLUMN].index
         y_value = column_wise_series[constants.STOCK_COLUMN].values
         oil = column_wise_series[constants.OIL_COLUMN].values
-        news_value = column_wise_series[constants.NEWS_COLUMN_2].values
-
-        # stock_dict = {
-        #     "ds": ds_value,
-        #     "y": np.array(y_value).reshape(len(y_value), ),
-        #     "oil": np.array(oil).reshape(len(oil), )
-        # }
+        # news_value = column_wise_series[constants.NEWS_COLUMN_2].values
 
         stock_dict = {
             "ds": ds_value,
             "y": np.array(y_value).reshape(len(y_value), ),
-            "oil": np.array(oil).reshape(len(oil), ),
-            "news":np.array(news_value).reshape(len(news_value), ),
+            "oil": np.array(oil).reshape(len(oil), )
         }
 
         df = pd.DataFrame(stock_dict)
@@ -37,14 +30,14 @@ class ProphetMultifeatureModel2(Model):
         self.ml.add_country_holidays(country_name="US")
 
         self.ml.add_regressor('oil', prior_scale=0.05, mode="multiplicative")
-        self.ml.add_regressor('news', prior_scale=0.05, mode="multiplicative")
+        # self.ml.add_regressor('news', prior_scale=0.05, mode="multiplicative")
         self.ml.fit(df)
 
-        df_news = df[['ds', 'news']]
-        df_news.rename(columns={'news': 'y'}, inplace=True)
-        self.ml_news = Prophet(interval_width=0.95, weekly_seasonality=True, changepoint_prior_scale=0.05)
-        self.ml_news.add_country_holidays(country_name="US")
-        self.ml_news.fit(df_news)
+        # df_news = df[['ds', 'news']]
+        # df_news.rename(columns={'news': 'y'}, inplace=True)
+        # self.ml_news = Prophet(interval_width=0.95, weekly_seasonality=True, changepoint_prior_scale=0.05)
+        # self.ml_news.add_country_holidays(country_name="US")
+        # self.ml_news.fit(df_news)
 
         df_oil = df[['ds', 'oil']]
         df_oil.rename(columns={'oil': 'y'}, inplace=True)
@@ -57,11 +50,11 @@ class ProphetMultifeatureModel2(Model):
     def predict(self, h: int, column_wise_series: Dict[str, pd.Series]) -> (pd.Series, Dict):
         future = self.ml.make_future_dataframe(periods=h)
 
-        forecast_news = self.ml_news.predict(future)
+        # forecast_news = self.ml_news.predict(future)
         forecast_oil = self.ml_oil.predict(future)
-        final_future = pd.concat([future[-h:], forecast_news["yhat"][-h:], forecast_oil["yhat"][-h:]], axis=1)
+        final_future = pd.concat([future[-h:], forecast_oil["yhat"][-h:]], axis=1)
         # final_future = pd.concat([future[-h:], forecast_oil["yhat"][-h:]], axis=1)
-        final_future.columns = ["ds", "news", "oil"]
+        final_future.columns = ["ds", "oil"]
 
         forecast = self.ml.predict(final_future[-h:])
         forecast = forecast.set_index("ds")
