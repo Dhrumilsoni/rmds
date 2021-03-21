@@ -248,7 +248,7 @@ class StockNewsPreProcessor(AbstractPreProcessor):
 
 		
 
-		with pd.option_context('display.max_rows', 100, 'display.max_columns', 100):
-			print(list(company_wise_dataframes.items())[0][1])
+		# with pd.option_context('display.max_rows', 100, 'display.max_columns', 100):
+		# 	print(list(company_wise_dataframes.items())[0][1])
 		return company_wise_dataframes, column_info
 

@@ -17,3 +17,6 @@ DATE_FORMAT = '%Y-%m-%d'
 TRAINING_SAMPLES = 'training_samples'
 COMPANIES = 'companies'
 NEWS_LAG_PREFIX = 'news_lag_'
+SIMULATOR = 'simulator'
+INITIAL_AMOUNT = 'initial_amount'
+SIMULATOR_ARGS = "simulator_args"

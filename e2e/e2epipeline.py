@@ -3,6 +3,7 @@ from preprocessing import PreProcessorFactory
 from e2e.models.model import ModelFactory
 from train_test_split import TrainTestSplit
 from evaluation import Evaluation
+from simulation import SimulatorFactory
 import constants
 import json
 
@@ -31,6 +32,9 @@ def main(config_pth: str):
     tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE], split_method=split_method)
     evaluation = Evaluation(config[constants.PREDICTION_WINDOW])
 
+    simulator_args = config[constants.SIMULATOR_ARGS]
+    simulator = SimulatorFactory.create_simulator(config[constants.SIMULATOR], **simulator_args)
+
     if "split_date" not in config:
         split_dates = None
     else:
@@ -49,6 +53,8 @@ def main(config_pth: str):
             model.train(df_train, config[constants.PREDICTION_WINDOW])
             # model.summary()
             evaluation.add(model, df_test, df_train)
+            simulator.add(model, df_test, df_train)
+    simulator.complete()
     evaluation.evaluate()
 
 
