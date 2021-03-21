@@ -87,7 +87,7 @@ class AbstractPreProcessor:
 			# if companies is not defined in the config include all companies
 			if self.companies is None or company in self.companies:
 				news_dfs[company] = news_df.loc[news_df["stock_name"] == company, ['News Sentiment', 'Sentiment Magnitude']]
-				news_dfs[company][constants.NEWS_COLUMN] = news_dfs[company]['News Sentiment']*news_dfs[company]['Sentiment Magnitude']
+				news_dfs[company][constants.NEWS_COLUMN] = news_dfs[company]['News Sentiment']
 				news_dfs[company] = news_dfs[company].loc[:, [constants.NEWS_COLUMN]]
 				news_dfs[company] = news_dfs[company].sort_index()
 				news_dfs[company] = news_dfs[company].resample('D').mean().fillna(method='ffill')

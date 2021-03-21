@@ -32,9 +32,9 @@ class ProphetMultifeatureModel(Model):
         df = pd.DataFrame(stock_dict)
         df.ds = pd.to_datetime(df.ds)
         # train now
-        self.ml = Prophet(interval_width=0.95, weekly_seasonality=True, changepoint_prior_scale=0.05)
+        self.ml = Prophet(interval_width=0.95, weekly_seasonality=True, changepoint_prior_scale=self.prior_scale)
         for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN] + 1):
-            self.ml.add_regressor(constants.NEWS_LAG_PREFIX+str(past_days), prior_scale=0.05, mode='multiplicative')
+            self.ml.add_regressor(constants.NEWS_LAG_PREFIX+str(past_days), prior_scale=self.prior_scale, mode='multiplicative')
         self.ml.add_country_holidays(country_name="US")
         self.ml.fit(df)
 
@@ -56,7 +56,7 @@ class ProphetMultifeatureModel(Model):
         columns_future.remove('ds2')
         future = future.loc[:, columns_future]
 
-        forecast = self.ml.predict(future[:])
+        forecast = self.ml.predict(future[-h:])
         forecast = forecast.set_index("ds")
         # print(type(forecast['yhat']))
         conf_interval = {}

@@ -69,7 +69,8 @@ class Evaluation(object):
         train_pred = output_instance["train_prediction"]
 
         return_dict["test_pred"] = test_pred
-        return_dict["train_pred"] = train_pred[-self.num_train_days_to_include:]
+        if train_pred is not None:
+            return_dict["train_pred"] = train_pred[-self.num_train_days_to_include:]
 
         stock_price_series = self.append_train_data(test_gt, train_data[constants.STOCK_COLUMN][constants.STOCK_COLUMN])
         return_dict[constants.STOCK_COLUMN] = stock_price_series
