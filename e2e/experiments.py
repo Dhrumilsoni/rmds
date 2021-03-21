@@ -1,5 +1,6 @@
 import json
 import os
+from tqdm import tqdm
 
 f = open('configs_dir/prophet.json')
 
@@ -25,7 +26,7 @@ companies = ['MARATHON PETROLEUM CORPORATION', 'EXXON MOBIL CORPORATION',
 #         r'C:\Users\dhrum\.conda\envs\hmk\python.exe D:/rmds/e2e/e2epipeline.py --config_pth ./configs_dir/prophet.json')
 
 
-for company in companies:
+for company in tqdm(companies):
     data["companies"] = [company]
     data["simulator_args"]["stock"] = [company]
     os.remove('./configs_dir/prophet.json')
