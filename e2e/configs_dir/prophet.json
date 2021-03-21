@@ -31,7 +31,10 @@
     "simulator_args": {
         "initial_amount": 1000,
         "stock": [
-            "CHEVRON CORPORATION"
+            "EXXON MOBIL CORPORATION"
         ]
-    }
+    },
+    "companies": [
+        "EXXON MOBIL CORPORATION"
+    ]
 }
