@@ -21,7 +21,7 @@
       }
     }
   },
-  "simulator": "S1",
+  "simulator": "S3",
   "simulator_args": {
     "initial_amount": 1000,
     "stock": ["CHEVRON CORPORATION"]
