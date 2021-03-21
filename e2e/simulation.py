@@ -1,4 +1,5 @@
 import argparse
+import os
 from typing import List, Dict, Tuple
 from abc import abstractmethod
 from collections.abc import Callable
@@ -234,5 +235,5 @@ class S3Simulator(AbstractSimulator):
                 current_stocks = 0
 
             net_worth.append(current_money+current_stocks*all_val["cur_val"][ind])
-        pd.Series(net_worth).plot()
-
+        fig = pd.Series(net_worth).plot()
+        fig.figure.savefig(os.path.join(r'results', r'plot-'+self.stock[0].replace(' ', '_')+'-'+str(datetime.datetime.now()).replace(' ', '_').replace(':', '_')+'.png'))

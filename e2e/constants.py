@@ -21,3 +21,4 @@ NEWS_LAG_PREFIX = 'news_lag_'
 SIMULATOR = 'simulator'
 INITIAL_AMOUNT = 'initial_amount'
 SIMULATOR_ARGS = "simulator_args"
+PRIOR_SCALE = 'prior_scale'

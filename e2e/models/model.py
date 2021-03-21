@@ -31,6 +31,11 @@ class Model(object):
 
 		self.is_trained = False
 
+		if constants.PRIOR_SCALE in kwargs:
+			self.prior_scale = kwargs[constants.PRIOR_SCALE]
+		else:
+			self.prior_scale = 0.05
+
 	@abstractmethod
 	def train(self, column_wise_series: Dict[str, pd.Series], prediction_window: int) -> None:
 		pass
