@@ -8,8 +8,6 @@ certifi==2019.9.11
 cffi==1.13.0
 chardet==3.0.4
 cmdstanpy==0.9.5
-conda==4.7.12
-conda-package-handling==1.6.0
 convertdate==2.3.2
 cryptography==2.8
 cycler==0.10.0
@@ -72,7 +70,6 @@ python-dateutil==2.8.1
 pytz==2019.3
 pyzmq==19.0.1
 requests==2.23.0
-ruamel-yaml==0.15.46
 scikit-learn==0.24.1
 scipy==1.4.1
 selenium==3.141.0

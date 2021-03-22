@@ -1,9 +1,9 @@
 from typing import Dict
-from e2e.models.model import ModelFactory, Model
+from models.model import ModelFactory, Model
 import pandas as pd
 import numpy as np
-from e2e.utils import get_date_minus_days
-import e2e.constants as constants
+from utils import get_date_minus_days
+import constants as constants
 from fbprophet import Prophet
 
 @ModelFactory.register('prophet_multifeature_model')
@@ -20,9 +20,10 @@ class ProphetMultifeatureModel(Model):
             "y": np.array(y_value).reshape(len(y_value), )
         }
         # print(column_wise_series)
-        for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN]+1):
-            temp = column_wise_series[constants.NEWS_LAG_PREFIX+str(past_days)].values
-            stock_dict[constants.NEWS_LAG_PREFIX + str(past_days)] = np.array(temp).reshape(len(temp), )
+        if constants.NEWS_COLUMN in self.past_horizon:
+                for past_days in range(1, self.past_horizon[constants.NEWS_COLUMN]+1):
+                        temp = column_wise_series[constants.NEWS_LAG_PREFIX+str(past_days)].values
+                        stock_dict[constants.NEWS_LAG_PREFIX + str(past_days)] = np.array(temp).reshape(len(temp), )
 
         # with pd.option_context('display.max_rows', 100, 'display.max_columns', 100):
         #     print(stock_dict)

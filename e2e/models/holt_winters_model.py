@@ -1,5 +1,5 @@
 from typing import Dict
-from e2e.models.model import ModelFactory, Model
+from models.model import ModelFactory, Model
 import pandas as pd
 from statsmodels.tsa.api import Holt
 from statsmodels.tsa.holtwinters.results import HoltWintersResults

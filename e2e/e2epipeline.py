@@ -1,6 +1,6 @@
 import argparse
 from preprocessing import PreProcessorFactory
-from e2e.models.model import ModelFactory
+from models.model import ModelFactory
 from train_test_split import TrainTestSplit
 from evaluation import Evaluation
 from simulation import SimulatorFactory

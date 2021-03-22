@@ -1,8 +1,8 @@
 from typing import Dict
-from e2e.models.model import ModelFactory, Model
+from models.model import ModelFactory, Model
 import pandas as pd
-from e2e.utils import get_date_minus_days
-import e2e.constants as constants
+from utils import get_date_minus_days
+import constants as constants
 
 @ModelFactory.register('mock_ML_model')
 class MockMLModel(Model):

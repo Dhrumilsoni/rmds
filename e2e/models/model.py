@@ -3,11 +3,11 @@ from abc import abstractmethod
 from typing import List, Dict
 import pandas as pd
 from collections.abc import Callable
-import e2e.constants as constants
-from e2e.train_test_split import TrainTestSplit
+import constants as constants
+from train_test_split import TrainTestSplit
 import datetime
 import random
-from e2e.utils import get_date_minus_days
+from utils import get_date_minus_days
 
 
 def parse_args():

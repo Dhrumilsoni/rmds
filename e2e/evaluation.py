@@ -1,7 +1,7 @@
 import argparse
 
-from e2e import constants
-from e2e.models.model import Model
+import constants
+from models.model import Model
 import pandas as pd
 from typing import Dict
 import json

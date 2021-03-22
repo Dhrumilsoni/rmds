@@ -7,7 +7,7 @@ import pandas as pd
 import constants
 import datetime
 from utils import get_date_minus_days
-from e2e.models.model import Model
+from models.model import Model
 
 
 def parse_args():
