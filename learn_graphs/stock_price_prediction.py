@@ -103,4 +103,3 @@ def analyze(pth: str):
 if __name__ == "__main__":
 	opt = parse_args()
 	analyze(opt.pth)
-	pass

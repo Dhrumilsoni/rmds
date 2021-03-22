@@ -1,4 +1,5 @@
 import argparse
+import csv
 import os
 from typing import List, Dict, Tuple
 from abc import abstractmethod
@@ -7,7 +8,7 @@ import pandas as pd
 import constants
 import datetime
 from utils import get_date_minus_days
-from e2e.models.model import Model
+from models.model import Model
 
 
 def parse_args():
@@ -22,7 +23,7 @@ class AbstractSimulator:
         self.stock = kwargs['stock']
         # see next two functions comments.
         self.stock_val = {}
-        # INFO: can't think of any other args :(
+        self.result_folder_name = kwargs['result_folder_name']
 
     @abstractmethod
     def add(self, model: Model, df_test_ground_truth: Dict[str, pd.Series], df_train: Dict[str, pd.DataFrame]) -> None:
@@ -129,11 +130,9 @@ class S2Simulator(AbstractSimulator):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # if there are more than one stocks. S2 shouldn't run.
-        # TODO: Think about multiple stocks anytime soon.
         assert len(self.stock) == 1, "S2 should have only one stock."
         self.prediction_window = 1
 
-    # TODO: add "add" function in the parent class instead of the child class.
     def add(self, model: Model, df_test_ground_truth: Dict[str, pd.Series], df_train: Dict[str, pd.DataFrame]) -> None:
         df_test_for_prediction = {}
         for col in df_test_ground_truth:
@@ -183,12 +182,10 @@ class S2Simulator(AbstractSimulator):
 class S3Simulator(AbstractSimulator):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # if there are more than one stocks. S2 shouldn't run.
-        # TODO: Think about multiple stocks anytime soon.
+        # if there are more than one stocks. S3 shouldn't run.
         assert len(self.stock) == 1, "S3 should have only one stock."
         self.prediction_window = 1
 
-    # TODO: add "add" function in the parent class instead of the child class.
     def add(self, model: Model, df_test_ground_truth: Dict[str, pd.Series], df_train: Dict[str, pd.DataFrame]) -> None:
         df_test_for_prediction = {}
         for col in df_test_ground_truth:
@@ -235,5 +232,12 @@ class S3Simulator(AbstractSimulator):
                 current_stocks = 0
 
             net_worth.append(current_money+current_stocks*all_val["cur_val"][ind])
+
+        columns = ['date', 'net_worth_simulation_val', 'cur_val', 'next_val', 'lower_bound', 'upper_bound']
+
+        with open(os.path.join(os.path.join("results", self.result_folder_name), 'prediction_results.csv'), 'w+') as f:
+            write = csv.writer(f)
+            write.writerow(columns)
+            write.writerows([[date, net_worth[ind], all_val["cur_val"][ind], all_val["next_val"][ind], all_val["lower_bound"][ind], all_val["upper_bound"][ind]] for ind, date in enumerate(all_val["date"])])
         fig = pd.Series(net_worth).plot()
-        fig.figure.savefig(os.path.join(r'results', r'plot-'+self.stock[0].replace(' ', '_')+'-'+str(datetime.datetime.now()).replace(' ', '_').replace(':', '_')+'.png'))
+        fig.figure.savefig(os.path.join(os.path.join("results", self.result_folder_name), r'plot-'+self.stock[0].replace(' ', '_')+'-'+str(datetime.datetime.now()).replace(' ', '_').replace(':', '_')+'.png'))

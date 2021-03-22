@@ -31,4 +31,3 @@ def do_scatter_plot(x, y, title:str, xlabel:str, ylabel:str):
 
 if __name__ == "__main__":
 	opt = parse_args()
-	pass

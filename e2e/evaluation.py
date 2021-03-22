@@ -1,7 +1,8 @@
 import argparse
+import csv
 
-from e2e import constants
-from e2e.models.model import Model
+import constants
+from models.model import Model
 import pandas as pd
 from typing import Dict
 import json
@@ -30,14 +31,12 @@ def parse_args():
 
 class Evaluation(object):
 
-    def __init__(self, prediction_window):
+    def __init__(self, prediction_window, result_folder_name):
         self.prediction_window = prediction_window
         self.results = {}
         self.evaluation = {}
         self.num_train_days_to_include = self.prediction_window * 5
-        now = datetime.datetime.now()
-        dt_string = now.strftime("%d-%m-%Y-%H-%M-%S")
-        self.folder_name = dt_string
+        self.folder_name = result_folder_name
 
     def getRMSE(self, series1: pd.Series, series2: pd.Series):
         return ((series1 - series2) ** 2).mean() ** .5
@@ -130,7 +129,7 @@ class Evaluation(object):
                 plt.savefig(path)
                 plt.close(fig)
 
-        self.create_bar_chart("RMSE")
+        # self.create_bar_chart("RMSE")
 
     def evaluate(self):
         for company in self.results:
@@ -142,6 +141,12 @@ class Evaluation(object):
         print(json.dumps(self.evaluation, indent=4))
 
         self.create_plots()
+        with open(os.path.join(os.path.join("results", self.folder_name), 'rmse.csv'), 'w+') as f:
+            write = csv.writer(f)
+            for company in self.results:
+                avg_rmse_error = self.get_avg_RMSE(self.results[company])
+                write.writerow(['RMSE', avg_rmse_error])
+
 
     def add(self, model: Model, df_test_ground_truth: Dict[str, pd.Series], df_train: Dict[str, pd.DataFrame]):
         df_test_for_prediction = {}
@@ -181,4 +186,3 @@ if __name__ == "__main__":
     plt.plot(s)
 
     plt.show()
-    pass

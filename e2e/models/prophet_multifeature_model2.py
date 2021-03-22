@@ -1,9 +1,8 @@
 from typing import Dict
-from e2e.models.model import ModelFactory, Model
+from models.model import ModelFactory, Model
 import pandas as pd
 import numpy as np
-from e2e.utils import get_date_minus_days
-import e2e.constants as constants
+import constants as constants
 from fbprophet import Prophet
 
 @ModelFactory.register('prophet_multifeature_model2')

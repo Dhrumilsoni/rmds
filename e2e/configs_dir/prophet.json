@@ -13,7 +13,7 @@
             "news_sentiment": 1
         },
         "start_date": "2017-01-01",
-        "end_date": "2017-12-30"
+        "end_date": "2017-01-30"
     },
     "split_method": "daily",
     "prediction_window": 7,
@@ -31,10 +31,10 @@
     "simulator_args": {
         "initial_amount": 1000,
         "stock": [
-            "EXXON MOBIL CORPORATION"
+            "CHEVRON CORPORATION"
         ]
     },
     "companies": [
-        "EXXON MOBIL CORPORATION"
+        "CHEVRON CORPORATION"
     ]
 }

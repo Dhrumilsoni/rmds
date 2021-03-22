@@ -1,11 +1,15 @@
 import argparse
+import datetime
+
 from preprocessing import PreProcessorFactory
-from e2e.models.model import ModelFactory
+from models.model import ModelFactory
+from models.model import suppress_stdout_stderr
 from train_test_split import TrainTestSplit
 from evaluation import Evaluation
 from simulation import SimulatorFactory
 import constants
 import json
+from tqdm import tqdm
 
 
 def parse_args():
@@ -30,9 +34,12 @@ def main(config_pth: str):
         split_method = "bi-monthly"
 
     tts = TrainTestSplit(config[constants.PREDICTION_WINDOW], columns_info, config[constants.PREPROCESSOR_ARGS][constants.START_DATE], config[constants.PREPROCESSOR_ARGS][constants.END_DATE], split_method=split_method)
-    evaluation = Evaluation(config[constants.PREDICTION_WINDOW])
+
+    result_folder_name = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+    evaluation = Evaluation(config[constants.PREDICTION_WINDOW], result_folder_name)
 
     simulator_args = config[constants.SIMULATOR_ARGS]
+    simulator_args['result_folder_name'] = result_folder_name
     simulator = SimulatorFactory.create_simulator(config[constants.SIMULATOR], **simulator_args)
 
     if "split_date" not in config:
@@ -42,7 +49,7 @@ def main(config_pth: str):
 
     for company, df in company_wise_dataframes.items():
         date_splits = tts.do_split(df, split_dates)
-        for date, train_test_data in date_splits.items():
+        for date, train_test_data in tqdm(date_splits.items()):
             df_train = train_test_data[constants.TRAIN]
             df_test = train_test_data[constants.TEST]
 
@@ -50,15 +57,15 @@ def main(config_pth: str):
             hyperparams = config[constants.MODEL][constants.HYPERPARAMS]
             model = ModelFactory.create_model(config[constants.MODEL][constants.NAME],
                                               split_date=date, company=company, **hyperparams)
-            model.train(df_train, config[constants.PREDICTION_WINDOW])
+            with suppress_stdout_stderr():
+                model.train(df_train, config[constants.PREDICTION_WINDOW])
             # model.summary()
             evaluation.add(model, df_test, df_train)
             simulator.add(model, df_test, df_train)
-    simulator.complete()
     evaluation.evaluate()
+    simulator.complete()
 
 
 if __name__ == "__main__":
     opt = parse_args()
     main(opt.config_pth)
-    pass

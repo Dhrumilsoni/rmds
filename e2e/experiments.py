@@ -28,6 +28,7 @@ companies = ['MARATHON PETROLEUM CORPORATION', 'EXXON MOBIL CORPORATION',
 
 for company in tqdm(companies):
     data["companies"] = [company]
+    data["preprocessor_args"]["companies"] = [company]
     data["simulator_args"]["stock"] = [company]
     os.remove('./configs_dir/prophet.json')
     f = open('configs_dir/prophet.json', 'w+')
