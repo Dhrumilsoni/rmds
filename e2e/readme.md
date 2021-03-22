@@ -27,10 +27,10 @@ the example of the config file is below:
 {
   "preprocessor_args": {
     "csv_files": ["dataset/stock_exchange.csv", "data/all_company_news.csv"],
-    "companies": ["MARATHON OIL CORPORATION"],
+    "companies": ["CHEVRON CORPORATION"],
     "preprocessor_name": "stock_news_preprocessor",
     "past_horizon": {
-      "stock_price": 400,
+      "stock_price": 200,
       "news_sentiment": 5
     },
     "start_date": "2017-01-01",
@@ -40,11 +40,18 @@ the example of the config file is below:
 
   "prediction_window": 100,
   "model": {
-    "name": "prophet_model",
+    "name": "prophet_multifeature_model",
     "hyperparams": {
-      "damped_trend": true,
-      "stock_column_name": "stock_price"
+      "past_horizon": {
+        "stock_price": 200,
+        "news_sentiment": 5
+      }
     }
+  },
+  "simulator": "S1",
+  "simulator_args": {
+    "initial_amount": 1000,
+    "stock": ["CHEVRON CORPORATION"]
   }
 }
 ```
@@ -62,4 +69,48 @@ the example of the config file is below:
 **name** - Name of the class that implements the model
 **hyperparameter** - hyperparams for the model, this will be given to the model during initialization
 **past_horizon** - number of days of data in the past that model relies on to predict future stock prices.
-**
+
+## Code Modules
+
+There are five modules in the code.
+1. Preprocessor
+2. TrainTestSplit
+3. Model
+4. Evaluation
+5. Strategy simulation
+
+Each of the modules are implemented using classes. TrainTestSplit and Evaluation modules only have only one class in it, but other modules have multiple options from which user can choose.    
+If user wants to run a model which predicts stock prices only using past stock price values, then user should choose ```stock_news_preprocessor``` and ```prophet_multifeature_model``` , and provide only ```stock_price``` in the ```past_horizon``` parameters.   
+Following sections describes about each of the modules. 
+
+### Preprocessor
+
+Possible options:
+1. ```stock_preprocessor``` - this preprocessor extracts stock data from csv files. It fills data points for the dates for which csv files didn't have data. For stock price it just takes closing price of yesterday.   
+2. ```stock_oil_preprocessor``` - It does the same thing as of ```stock_preprocessor``` but it also extracts oil prices. For this code, we are only considering WTI crude oil prices as one of the factors that affect the stock price.
+3. ```stock_news_preprocessor``` - It does the same thing as of ```stock_preprocessor``` but it also extracts news sentiments for each company.
+4. ```stock_oil_news_preprocessor``` - It does the same thing as of ```stock_preprocessor``` but it also extracts oil prices and news sentiments for each company. For this code, we are only considering WTI crude oil prices as one of the factors that affect the stock price.
+
+### TrainTestSplit Module
+
+This module splits the dataset into multiple ```(train, test)``` data points. If ```split_date``` list is provided then it splits based on those dates. Otherwise it splits it based on ```split_method```.
+
+### Model
+
+This is a model which will be trained using the data gained from ```TrainTestSplit``` module.    
+If one wants to implement a new model class, then one should inherit ```Model``` class and implement, ```train()```, ```test()``` and ```summary()``` methods in it.
+Possible model options:
+1. ```holt_winters_model``` - Model that implements ```holt_winters``` method of time series prediction on stock price.   
+2. ```prophet_model``` - Model that uses ```prophet``` library from Facebook to predict stock prices.
+3. ```prophet_multifeature_model``` - model that uses ```prophet``` library from Facebook to predict stock prices by taking news sentiments into account.
+
+### Evaluate
+
+Evaluate module has to method in it: ```add()``` and ```evaluate()```. ```add()``` method is called for all instances of the model and then evaluate method is called at the end of  
+
+### Strategy simulation
+
+This module is used to simulate investment strategies using predicted stock price. There are two methods in this class: ```add()``` and ```simulate()```.   
+```add()``` method calls model's predict method to get prediction for next few days and gathers predicted data for a given time period. ```simulate()``` is then called at the end to run a simuation of any investment strategy.   
+If one wants to implement a new investment strategy, then one should inherit ```Simulation``` class and implement ```add()``` and ```simulate()``` method of it.   
+

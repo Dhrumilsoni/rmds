@@ -9,7 +9,7 @@
       "news": 100
     },
     "start_date": "2017-01-01",
-    "end_date": "2017-12-31"
+    "end_date": "2017-01-31"
   },
   "split_method": "daily",
   "prediction_window": 7,

@@ -32,7 +32,7 @@ class AbstractSimulator:
         pass
 
     @abstractmethod
-    def complete(self):
+    def simulate(self):
         """
         This method will note that there is nothing else to be added and simulation ends.
 
@@ -105,7 +105,7 @@ class S1Simulator(AbstractSimulator):
         self.stock_val[model.company]["lower_bound"].append(confidence_interval["95"][0].values[0])
         self.stock_val[model.company]["upper_bound"].append(confidence_interval["95"][1].values[0])
 
-    def complete(self):
+    def simulate(self):
         current_money = self.initial_amount
         current_stocks = 0
         all_val = self.stock_val[self.stock[0]]
@@ -159,7 +159,7 @@ class S2Simulator(AbstractSimulator):
         self.stock_val[model.company]["lower_bound"].append(confidence_interval["95"][0].values[0])
         self.stock_val[model.company]["upper_bound"].append(confidence_interval["95"][1].values[0])
 
-    def complete(self):
+    def simulate(self):
         current_money = self.initial_amount
         current_stocks = 0
         all_val = self.stock_val[self.stock[0]]
@@ -214,7 +214,7 @@ class S3Simulator(AbstractSimulator):
         self.stock_val[model.company]["lower_bound"].append(confidence_interval["95"][0].values[0])
         self.stock_val[model.company]["upper_bound"].append(confidence_interval["95"][1].values[0])
 
-    def complete(self):
+    def simulate(self):
         current_money = self.initial_amount
         current_stocks = 0
         all_val = self.stock_val[self.stock[0]]

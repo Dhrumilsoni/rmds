@@ -54,7 +54,7 @@ def main(config_pth: str):
             # model.summary()
             evaluation.add(model, df_test, df_train)
             simulator.add(model, df_test, df_train)
-    simulator.complete()
+    simulator.simulate()
     evaluation.evaluate()
 
 
